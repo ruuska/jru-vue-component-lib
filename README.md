@@ -1,4 +1,5 @@
-# lottie-test
+# JRuuska Vue 3 component library
+A little collection of useful components
 
 ## Project setup
 ```
