@@ -39,7 +39,7 @@ export default {
       animation.playSegments([0, 60], true)
     }
 
-    function exit (e: MouseEvent): void {
+    function exit (): void {
       dialogOpen.value = false
       setTimeout(() => {
         animation.setDirection(-1)
