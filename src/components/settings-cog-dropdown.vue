@@ -2,11 +2,17 @@
   <i
     ref='container'
     @click.prevent="open"
+    @click="(e) => { e.stopPropagation() }"
+    :style="{ 'font-size': size || '1em' }"
   >
     <transition name='drop-in'>
-      <div @click.prevent='close' class='dropdown' v-if='dialogOpen'>
-        <div class="dropdown__inner">
-          Settings
+      <div
+        :style="{...dropdownStyle}"
+        class='dropdown'
+        v-if='dialogOpen'
+      >
+        <div :style="{...dropdownInnerStyle}" class="dropdown__inner">
+          <slot></slot>
         </div>
       </div>
     </transition>
@@ -15,10 +21,13 @@
 
 <script lang="ts">
 import Lottie, { AnimationItem } from 'lottie-web'
+// https://lottiefiles.com/2305-settings-icon
 import CogAnimation from '@/assets/cogdrop.json'
 import { ref, onMounted } from 'vue'
 
 export default {
+  props: { size: String, dropdownStyle: Object, dropdownInnerStyle: Object },
+
   setup () {
     const container = ref<HTMLElement>()
     const dialogOpen = ref(false)
@@ -30,21 +39,22 @@ export default {
       animation.playSegments([0, 60], true)
     }
 
-    function open (): void {
-      if (!animation || dialogOpen.value) return
-      animation.setDirection(1)
-      animation.playSegments([60, 89], true)
-      setTimeout(() => { dialogOpen.value = true }, 500)
-    }
-
-    function close (e: MouseEvent): void {
+    function exit (e: MouseEvent): void {
       dialogOpen.value = false
       setTimeout(() => {
         animation.setDirection(-1)
         animation.stop()
         animation.playSegments([89, 60], true)
-      }, 400)
-      e.stopPropagation()
+      }, 200)
+      document.body.removeEventListener('click', exit, false)
+    }
+
+    function open (): void {
+      if (!animation || dialogOpen.value) return
+      animation.setDirection(1)
+      animation.playSegments([60, 89], true)
+      setTimeout(() => { dialogOpen.value = true }, 420)
+      document.body.addEventListener('click', exit, false)
     }
 
     onMounted(() => {
@@ -53,7 +63,10 @@ export default {
         renderer: 'svg',
         loop: false,
         autoplay: false,
-        animationData: CogAnimation
+        animationData: CogAnimation,
+        rendererSettings: {
+          viewBoxSize: '160 160 280 280'
+        }
       })
       animation.setSpeed(2)
       animation.goToAndStop(60, true)
@@ -63,7 +76,7 @@ export default {
       container,
       enter,
       open,
-      close,
+      exit,
       dialogOpen
     }
   }
@@ -71,47 +84,51 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/style/vars';
+
 i {
   display: inline-block;
-  width: 4em;
+  width: 1em;
+  height: 1em;
   position: relative;
 }
 
 .dropdown {
   position: absolute;
-  top: 3.4em;
-  left: 2em;
-  box-shadow: 5px 5px 10px 3px rgba(0, 0, 0, 0.15);
+  font-size: 1rem;
+  top: 110%;
+  left: 50%;
+  box-shadow: 3px 3px 8px 0 rgba(0, 0, 0, 0.15);
   border-radius: 5px;
-  padding-top: 1em;
-  width: 140px;
-  height: 200px;
-  border: 1px solid #50E3C2;
+  border: 1px solid $primary-color;
   overflow: hidden;
+  width: fit-content;
+  height: fit-content;
 
   &__inner {
     position: relative;
-    width: 140px;
-    height: 200px;
+    width: fit-content;
+    height: fit-content;
   }
 }
 
 .drop-in {
-  &-enter-active,
+  &-enter-active {
+    opacity: 1;
+    transition: opacity .2s ease-out, top .2s ease-out;
+  }
   &-leave-active {
     opacity: 1;
-    transition: width .4s ease-out,
-      height .4s ease-out,
-      opacity .4s ease-out,
-      top .4s ease-out;
+    transition: opacity .2s ease-in, top .2s ease-in;
   }
 
-  &-enter-from,
+  &-enter-from {
+    opacity: 0;
+    top: 92%;
+  }
   &-leave-to {
     opacity: 0;
-    top: 3em;
-    width: 0;
-    height: 0;
+    top: 100%;
   }
 }
 </style>
