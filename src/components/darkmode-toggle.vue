@@ -45,7 +45,7 @@ export default {
         autoplay: false,
         animationData: toggleAnimationData,
         rendererSettings: {
-          viewBoxSize: '200 180 100 150'
+          viewBoxSize: '200 175 100 150'
         }
       })
       animation.addEventListener('complete', () => { isAnimating = false })
