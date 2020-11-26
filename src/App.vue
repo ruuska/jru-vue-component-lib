@@ -22,6 +22,8 @@ export default {
 <style lang="scss">
 @import '@/style/vars';
 
+* { box-sizing: border-box; }
+
 html,
 body {
   margin: 0;
@@ -31,6 +33,15 @@ body {
 }
 
 body {
+  --main-text-color: #121212;
+  --main-bg-color: #fff;
+  --main-link-color: #419986;
+  --dark-bg-color: #121825;
+  --dark-text-color: #fff;
+  --dark-link-color: #50E3C2;
+
+  --border-radius: 6px;
+
   min-height: 100vh;
 }
 

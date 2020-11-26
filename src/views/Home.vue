@@ -17,14 +17,34 @@
   </settings-cog-dropdown>
 
   <darkmode-toggle size="4rem" />
+
+  <progress-button ref="button" :state="buttonState" @click="mockLoad">Click me</progress-button>
 </template>
 
 <script lang="ts">
 import settingsCogDropdown from '@/components/settings-cog-dropdown.vue' // @ is an alias to /src
 import darkmodeToggle from '@/components/darkmode-toggle.vue'
+import ProgressButton, { ProgressBtnState } from '@/components/progress-button.vue'
+import { ref } from 'vue'
 
 export default {
-  components: { settingsCogDropdown, darkmodeToggle }
+  components: { settingsCogDropdown, darkmodeToggle, ProgressButton },
+
+  setup () {
+    const buttonState = ref<ProgressBtnState>('')
+
+    function mockLoad () {
+      buttonState.value = 'loading'
+      setTimeout(() => {
+        buttonState.value = 'success'
+      }, 200)
+    }
+
+    return {
+      buttonState,
+      mockLoad
+    }
+  }
 }
 </script>
 
